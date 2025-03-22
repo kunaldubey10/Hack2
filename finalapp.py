@@ -12,15 +12,33 @@ st.set_page_config(page_title="AgriShield - AI Crop Monitoring", layout="wide")
 
 # Sidebar Navigation (Updated Style)
 st.sidebar.title("🌾 AgriShield Navigation")
-page = st.sidebar.selectbox("Select a Page", ["Home", "NDVI Analysis", "Leaf Disease Detection", "Chatbot", "Other Features"])
+st.sidebar.markdown("---")  # Separator for cleaner look
 
-# OpenWeather API Key (Replace with your key)
+# Define pages
+PAGES = {
+    "Home": "🏡 Home",
+    "NDVI Analysis": "🌍 NDVI Analysis",
+    "Leaf Disease Detection": "🍃 Leaf Disease Detection",
+    "Chatbot": "💬 Chatbot",
+    "Other Features": "📌 Other Features"
+}
+
+# Custom Navigation using Buttons instead of Radio or Dropdown
+selected_page = None
+for key, label in PAGES.items():
+    if st.sidebar.button(label):
+        selected_page = key
+
+if selected_page is None:
+    selected_page = "Home"  # Default Page
+
+# OpenWeather API Key
 API_KEY = "e15e7551cdb8ed7df8c7fd1833af7fec"
 DEFAULT_CITY = "Delhi"
 DEFAULT_LAT, DEFAULT_LON = 28.7041, 77.1025  # Default location (Delhi, India)
 
 # Load trained plant disease detection model
-model_path = "D:\Hack\trained_plant_disease_model.keras"
+model_path = "AgriShield.keras"
 if os.path.exists(model_path):
     model = tf.keras.models.load_model(model_path)
 else:
@@ -78,7 +96,7 @@ def chatbot_response(user_input):
     return responses.get(user_input, "I'm not sure, but I'm learning! Try asking about weather, NDVI, or diseases.")
 
 # Home Page (With Live Weather Display)
-if page == "Home":
+if selected_page == "Home":
     st.title("🏡 Welcome to AgriShield")
     st.write("🚜 AI-driven Crop Disease Prediction and Farm Monitoring")
 
@@ -101,11 +119,11 @@ if page == "Home":
         st.error("⚠️ Failed to fetch weather data. Please check your API key.")
 
 # NDVI Analysis Page
-elif page == "NDVI Analysis":
+elif selected_page == "NDVI Analysis":
     show_ndvi_page()
 
 # Leaf Disease Detection Page
-elif page == "Leaf Disease Detection":
+elif selected_page == "Leaf Disease Detection":
     st.title("🍃 Leaf Disease Detection")
     st.write("📷 Upload an image of the plant leaf to detect diseases.")
 
@@ -120,7 +138,7 @@ elif page == "Leaf Disease Detection":
             st.success(f"🩺 **Prediction:** {result}")
 
 # AI Chatbot Page
-elif page == "Chatbot":
+elif selected_page == "Chatbot":
     st.title("💬 AgriShield Chatbot")
     st.write("🤖 Ask any farming-related questions below!")
 
@@ -130,6 +148,6 @@ elif page == "Chatbot":
         st.write(f"**🤖 Chatbot:** {bot_response}")
 
 # Other Features Placeholder
-elif page == "Other Features":
+elif selected_page == "Other Features":
     st.title("📌 Other Features")
     st.write("🔜 More functionalities will be added soon!")
